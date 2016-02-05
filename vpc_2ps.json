@@ -1,0 +1,132 @@
+{
+"AWSTemplateFormatVersion" : "2015-02-05",
+
+  	"Description" : "This template creates VPC and two Public Subnets, Internet Gateway and Routing Table",
+	"Resources": {
+		"VPC": {
+			"Type": "AWS::EC2::VPC",
+			"Properties": {
+				"CidrBlock": "10.0.0.0/16",
+				"Tags": [{
+					"Key": "Application",
+					"Value": {
+						"Ref": "AWS::StackId"
+					}
+				}]
+			}
+		},
+
+		"Subnet1": {
+			"Type": "AWS::EC2::Subnet",
+			"Properties": {
+				"AvailabilityZone": "us-west-2a",
+				"VpcId": {
+					"Ref": "VPC"
+				},
+				"CidrBlock": "10.0.1.0/24",
+				"Tags": [{
+					"Key": "Application",
+					"Value": {
+						"Ref": "AWS::StackId"
+					}
+				}]
+			}
+		},
+
+		"Subnet2": {
+			"Type": "AWS::EC2::Subnet",
+			"Properties": {
+				"AvailabilityZone": "us-west-2b",
+				"VpcId": {
+					"Ref": "VPC"
+				},
+				"CidrBlock": "10.0.2.0/24",
+				"Tags": [{
+					"Key": "Application",
+					"Value": {
+						"Ref": "AWS::StackId"
+					}
+				}]
+			}
+		},
+
+		"InternetGateway": {
+			"Type": "AWS::EC2::InternetGateway",
+			"Properties": {
+				"Tags": [{
+					"Key": "Application",
+					"Value": {
+						"Ref": "AWS::StackId"
+					}
+				}]
+			}
+		},
+
+		"AttachGateway": {
+			"Type": "AWS::EC2::VPCGatewayAttachment",
+			"Properties": {
+				"VpcId": {
+					"Ref": "VPC"
+				},
+				"InternetGatewayId": {
+					"Ref": "InternetGateway"
+				}
+			}
+		},
+
+		"RouteTable": {
+			"Type": "AWS::EC2::RouteTable",
+			"Properties": {
+				"VpcId": {
+					"Ref": "VPC"
+				},
+				"Tags": [{
+					"Key": "Application",
+					"Value": {
+						"Ref": "AWS::StackId"
+					}
+				}]
+			}
+		},
+
+		"Route": {
+			"Type": "AWS::EC2::Route",
+			"DependsOn": "AttachGateway",
+			"Properties": {
+				"RouteTableId": {
+					"Ref": "RouteTable"
+				},
+				"DestinationCidrBlock": "0.0.0.0/0",
+				"GatewayId": {
+					"Ref": "InternetGateway"
+				}
+			}
+		},
+
+		"Subnet1RouteTableAssociation": {
+			"Type": "AWS::EC2::SubnetRouteTableAssociation",
+			"Properties": {
+				"SubnetId": {
+					"Ref": "Subnet1"
+				},
+				"RouteTableId": {
+					"Ref": "RouteTable"
+				}
+			}
+		},
+
+		"Subnet2RouteTableAssociation": {
+			"Type": "AWS::EC2::SubnetRouteTableAssociation",
+			"Properties": {
+				"SubnetId": {
+					"Ref": "Subnet2"
+				},
+				"RouteTableId": {
+					"Ref": "RouteTable"
+				}
+			}
+		}
+
+	}
+
+}
