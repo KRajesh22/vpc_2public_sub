@@ -20,4 +20,4 @@ Use the content of the file in AWS CloudFormation console.
 More details:
 http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html
 
-Remember that currently CloudFormation can create subnets only in us-west-2 region.
+Remember, my script include AZ from Virginia Regions.
